@@ -23,7 +23,7 @@ export function SiteShell({
       <header className="fixed left-0 right-0 top-0 z-30 border-b border-white/10 bg-black/45 backdrop-blur-2xl">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
           <Link href="/" className="flex items-center gap-3" aria-label={`${siteConfig.name} home`}>
-            <span className="relative hidden h-14 w-36 sm:block">
+            <span className="relative block h-14 w-36">
               <Image
                 src={siteConfig.logo}
                 alt={`${siteConfig.name} logo`}
@@ -34,7 +34,10 @@ export function SiteShell({
               />
             </span>
           </Link>
-          <div className="hidden items-center gap-5 text-sm text-white/64 xl:flex">
+
+
+          <div className="hidden xl:flex items-center gap-5 text-sm text-white/64">
+
             {siteConfig.nav.map((item) => (
               <Link
                 key={item.href}
@@ -45,10 +48,12 @@ export function SiteShell({
               </Link>
             ))}
           </div>
+
           <Link
             href="/contact"
-            className="rounded-full border border-[#d9b46c]/35 bg-[#d9b46c]/10 px-4 py-2 text-sm font-medium text-[#ffe7ad] transition hover:border-[#d9b46c]/70 hover:bg-[#d9b46c]/20"
+            className="hidden xl:inline-flex rounded-full border border-[#d9b46c]/35 bg-[#d9b46c]/10 px-4 py-2 text-sm font-medium text-[#ffe7ad] transition hover:border-[#d9b46c]/70 hover:bg-[#d9b46c]/20"
           >
+
             Request Quote
           </Link>
         </nav>
