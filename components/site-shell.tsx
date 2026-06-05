@@ -1,11 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Footer } from "@/components/footer";
 import { siteConfig } from "@/lib/site-config";
+
+
 
 export function SiteShell({
   children,
@@ -15,6 +18,7 @@ export function SiteShell({
   whatsappHref: string;
 }) {
   const pathname = usePathname();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <>
@@ -34,6 +38,14 @@ export function SiteShell({
               />
             </span>
           </Link>
+
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="xl:hidden rounded-lg border border-white/10 px-3 py-2 text-white"
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? "✕" : "☰"}
+          </button>
 
 
           <div className="hidden xl:flex items-center gap-5 text-sm text-white/64">
@@ -57,6 +69,50 @@ export function SiteShell({
             Request Quote
           </Link>
         </nav>
+
+
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ duration: 0.3 }}
+              className="fixed top-0 right-0 z-50 h-screen w-72 bg-[#111111] border-l border-white/10 shadow-2xl xl:hidden"
+            >
+              <div className="flex h-full flex-col px-6 pt-24">
+                <button
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="absolute right-6 top-6 text-3xl text-white/80"
+                >
+                  ✕
+                </button>
+                {siteConfig.nav.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+
+                    className={`py-4 text-lg font-medium text-white/80 transition hover:text-white ${pathname === item.href ? "text-white" : ""
+                      }`}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+
+                <Link
+                  href="/contact"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="mt-4 rounded-full border border-[#d9b46c]/35 bg-[#d9b46c]/10 px-4 py-3 text-center text-sm font-medium text-[#ffe7ad]"
+                >
+                  Request Quote
+                </Link>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+
       </header>
       <motion.main
         key={pathname}
