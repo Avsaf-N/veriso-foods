@@ -4,6 +4,14 @@ import { buildFallbackMailto, saveInquiry, sendInquiryEmail } from "@/lib/inquir
 
 export async function POST(request: NextRequest) {
   const payload = (await request.json()) as Partial<InquiryInput>;
+  
+  if ((payload as any).website) {
+    return NextResponse.json(
+      { ok: false, message: "Spam detected." },
+      { status: 400 },
+    );
+  }
+
   const required = ["name", "company", "country", "email", "message"] as const;
   const missing = required.filter((field) => !payload[field]?.trim());
 

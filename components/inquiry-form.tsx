@@ -77,6 +77,15 @@ export function InquiryForm() {
         </label>
         <Field label="Quantity" name="quantity" type="text" />
       </div>
+
+      <input
+        type="text"
+        name="website"
+        autoComplete="off"
+        tabIndex={-1}
+        className="hidden"
+      />
+
       <label className="grid gap-2 text-sm font-medium text-white/78">
         Message
         <textarea
