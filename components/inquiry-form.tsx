@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { Turnstile } from "@marsidev/react-turnstile";
 import { products } from "@/lib/products";
 
 type SubmitStatus = "idle" | "sending" | "success" | "fallback" | "error";
@@ -8,6 +9,7 @@ type SubmitStatus = "idle" | "sending" | "success" | "fallback" | "error";
 export function InquiryForm() {
   const [status, setStatus] = useState<SubmitStatus>("idle");
   const [message, setMessage] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -15,7 +17,17 @@ export function InquiryForm() {
     setMessage("");
 
     const form = event.currentTarget;
-    const payload = Object.fromEntries(new FormData(form).entries());
+
+    const payload = {
+      ...Object.fromEntries(new FormData(form).entries()),
+      turnstileToken,
+    };
+
+    if (!turnstileToken) {
+      setStatus("error");
+      setMessage("Please complete the security check.");
+      return;
+    }
 
     try {
       const response = await fetch("/api/inquiry", {
@@ -96,6 +108,12 @@ export function InquiryForm() {
           placeholder="Tell us your required product, quantity, packaging, private-label needs, destination market, and timeline."
         />
       </label>
+
+      <Turnstile
+        siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ""}
+        onSuccess={(token) => setTurnstileToken(token)}
+      />
+
       <button
         type="submit"
         disabled={status === "sending"}

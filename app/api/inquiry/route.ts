@@ -1,15 +1,56 @@
 import { NextRequest, NextResponse } from "next/server";
+
+type InquiryPayload = Partial<InquiryInput> & {
+  website?: string;
+  turnstileToken?: string;
+};
+
 import { InquiryInput } from "@/lib/inquiry-types";
 import { buildFallbackMailto, saveInquiry, sendInquiryEmail } from "@/lib/inquiry-store";
 
 export async function POST(request: NextRequest) {
-  const payload = (await request.json()) as Partial<InquiryInput>;
-  
+
+  const payload = (await request.json()) as InquiryPayload;
+
   if ((payload as any).website) {
     return NextResponse.json(
       { ok: false, message: "Spam detected." },
       { status: 400 },
     );
+  }
+
+  const turnstileSecret = process.env.TURNSTILE_SECRET_KEY;
+
+  if (!payload.turnstileToken) {
+    return NextResponse.json(
+      { ok: false, message: "Security verification failed." },
+      { status: 400 },
+    );
+  }
+
+  if (turnstileSecret) {
+    const verifyResponse = await fetch(
+      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          secret: turnstileSecret,
+          response: payload.turnstileToken,
+        }),
+      },
+    );
+
+    const verifyData = await verifyResponse.json();
+
+    if (!verifyData.success) {
+      return NextResponse.json(
+        { ok: false, message: "Security verification failed." },
+        { status: 400 },
+      );
+    }
   }
 
   const required = ["name", "company", "country", "email", "message"] as const;
