@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -19,6 +19,13 @@ export function SiteShell({
 }) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [adminLoggedIn, setAdminLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setAdminLoggedIn(
+      sessionStorage.getItem("veriso_admin_logged_in") === "true"
+    );
+  }, []);
 
   return (
     <>
@@ -41,7 +48,7 @@ export function SiteShell({
 
           <div className="flex items-center gap-2 xl:hidden">
 
-            {pathname === "/admin" && (
+            {pathname === "/admin" && adminLoggedIn && (
               <button
                 onClick={() => {
                   sessionStorage.removeItem("veriso_admin_logged_in");
@@ -77,7 +84,7 @@ export function SiteShell({
             ))}
           </div>
 
-          {pathname === "/admin" && (
+          {pathname === "/admin" && adminLoggedIn && (
             <button
               onClick={() => {
                 sessionStorage.removeItem("veriso_admin_logged_in");
