@@ -71,7 +71,7 @@ body {
 
 .aurora {
   position: absolute;
-  inset: -20% -10% auto;
+  inset: -20% 0% auto 0;
   height: 56rem;
   background:
     radial-gradient(circle at 15% 30%, rgba(217, 180, 108, 0.2), transparent 25rem),

@@ -39,13 +39,29 @@ export function SiteShell({
             </span>
           </Link>
 
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="xl:hidden rounded-lg border border-white/10 px-3 py-2 text-white"
-            aria-label="Toggle menu"
-          >
-            {mobileMenuOpen ? "✕" : "☰"}
-          </button>
+          <div className="flex items-center gap-2 xl:hidden">
+
+            {pathname === "/admin" && (
+              <button
+                onClick={() => {
+                  sessionStorage.removeItem("veriso_admin_logged_in");
+                  window.location.reload();
+                }}
+                className="rounded-lg border border-red-500/30 px-3 py-2 text-sm text-red-300"
+              >
+                Logout
+              </button>
+            )}
+
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="rounded-lg border border-white/10 px-3 py-2 text-white"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? "✕" : "☰"}
+            </button>
+
+          </div>
 
 
           <div className="hidden xl:flex items-center gap-5 text-sm text-white/64">
@@ -60,6 +76,18 @@ export function SiteShell({
               </Link>
             ))}
           </div>
+
+          {pathname === "/admin" && (
+            <button
+              onClick={() => {
+                sessionStorage.removeItem("veriso_admin_logged_in");
+                window.location.reload();
+              }}
+              className="hidden xl:inline-flex rounded-full border border-red-500/30 px-4 py-2 text-sm font-medium text-red-300 hover:bg-red-500/10"
+            >
+              Logout
+            </button>
+          )}
 
           <Link
             href="/contact"
@@ -119,7 +147,7 @@ export function SiteShell({
         initial={{ opacity: 0, y: 18, filter: "blur(8px)" }}
         animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
         transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-        className="relative min-h-screen overflow-hidden"
+        className="relative min-h-screen overflow-x-hidden"
       >
         {children}
       </motion.main>
@@ -130,7 +158,7 @@ export function SiteShell({
       >
         WhatsApp
       </a>
-      <Footer />
+      {pathname !== "/admin" && <Footer />}
     </>
   );
 }

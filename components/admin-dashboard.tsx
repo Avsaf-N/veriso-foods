@@ -19,6 +19,20 @@ export function AdminDashboard() {
   //const [loading, setLoading] = useState(false);    delete kr dena 
 
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredInquiries =
+    data?.inquiries?.filter((inquiry) => {
+      const search = searchTerm.toLowerCase();
+
+      return (
+        inquiry.name.toLowerCase().includes(search) ||
+        inquiry.company.toLowerCase().includes(search) ||
+        inquiry.email.toLowerCase().includes(search) ||
+        inquiry.product.toLowerCase().includes(search) ||
+        inquiry.country.toLowerCase().includes(search)
+      );
+    }) || [];
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -137,22 +151,10 @@ export function AdminDashboard() {
 
   return (
     <>
+
       <div className="mx-auto max-w-7xl px-5 pb-28 pt-36 lg:px-8">
 
-        <div className="mb-6 flex justify-end">
-          <button
-            onClick={() => {
-              sessionStorage.removeItem(
-                "veriso_admin_logged_in"
-              );
 
-              setLoggedIn(false);
-            }}
-            className="rounded-full border border-white/10 px-5 py-2 text-sm font-semibold text-white/80 hover:bg-white/10"
-          >
-            Logout
-          </button>
-        </div>
 
         <div className="mb-10 max-w-4xl">
           <p className="mb-4 text-xs font-semibold uppercase tracking-[0.32em] text-[#d9b46c]">
@@ -188,8 +190,20 @@ export function AdminDashboard() {
           </div>
         ) : null}
 
+        {data?.ok && data.inquiries && data.inquiries.length > 0 && (
+          <div className="mb-6">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search by name, company, email, product or country..."
+              className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none placeholder:text-white/40"
+            />
+          </div>
+        )}
+
         {data?.ok && data.inquiries && data.inquiries.length > 0 ? (
-          <div className="overflow-hidden rounded-[1.75rem] border border-white/10">
+          <div className="overflow-x-auto rounded-[1.75rem] border border-white/10">
 
             <div className="grid min-w-[900px] grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr] bg-white/[0.08] p-4 text-xs font-semibold uppercase tracking-[0.2em] text-[#d9b46c]">
               <span>Name</span>
@@ -200,8 +214,8 @@ export function AdminDashboard() {
               <span>Date</span>
             </div>
 
-            <div className="overflow-x-auto">
-              {data.inquiries.map((inquiry) => (
+            <div>
+              {filteredInquiries.map((inquiry) => (
 
                 <div
                   key={inquiry.id}
